@@ -1,0 +1,118 @@
+#include <Servo.h> 
+#include <SoftwareSerial.h>
+
+#define STOP             0
+#define FORWARD_slow          1
+#define FORWARD_fast          2
+#define BACKWARD_slow         3
+#define BACKWARD_fast         4
+#define testforward           5
+
+int leftMotor1=4;              //定义Arduino板对应引脚
+int leftMotor2=5;
+int rightMotor1=6;
+int rightMotor2=7;
+int ENA1=10;
+int ENA2=8;
+int ENB1=11;
+int ENB2=9;
+int i=0;
+
+
+void setup() {
+  // put your setup code here, to run once:
+
+ Serial.begin(9600);
+ pinMode(leftMotor1,OUTPUT);
+ pinMode(leftMotor2,OUTPUT);
+ pinMode(rightMotor1,OUTPUT);
+ pinMode(rightMotor2,OUTPUT);
+
+}
+
+void loop() {
+  
+  // put your main code here, to run repeatedly:
+  if(Serial.available()>0){
+    char cmd = Serial.read();
+    Serial.print(cmd);
+    motorRun(cmd);
+  }
+}
+
+void motorRun(int cmd)                       //采用选择函数来处理不同命令
+{
+  switch(cmd){
+    case testforward:
+      Serial.println("testforward");
+      digitalWrite(leftMotor1,LOW);
+      digitalWrite(leftMotor2,HIGH);
+      digitalWrite(rightMotor1,HIGH);
+      digitalWrite(rightMotor2,LOW);
+      for(i=0;i<80;i++){                
+      analogWrite(ENA1,i);         //使能端模拟电信号输入来控制电机转速
+      analogWrite(ENA2,i);
+      analogWrite(ENB1,i);
+      analogWrite(ENB2,i);
+      delay(20);                 //每次循环暂停20ms来达到缓慢启动
+      }
+      analogWrite(ENA1,80);
+      analogWrite(ENA2,80);
+      analogWrite(ENB1,80);
+      analogWrite(ENB2,80);
+      break;
+    case FORWARD_slow:
+      Serial.println("FORWARD_slow");
+      digitalWrite(leftMotor1,LOW);
+      digitalWrite(leftMotor2,HIGH);
+      digitalWrite(rightMotor1,HIGH);
+      digitalWrite(rightMotor2,LOW);
+      analogWrite(ENA1,130);
+      analogWrite(ENA2,130);
+      analogWrite(ENB1,130);
+      analogWrite(ENB2,130);
+      break;
+    case FORWARD_fast:
+      Serial.println("FORWARD_fast");
+      digitalWrite(leftMotor1,LOW);
+      digitalWrite(leftMotor2,HIGH);
+      digitalWrite(rightMotor1,HIGH);
+      digitalWrite(rightMotor2,LOW);
+      analogWrite(ENA1,220);
+      analogWrite(ENA2,220);
+      analogWrite(ENB1,220);
+      analogWrite(ENB2,220);
+      break;
+
+    case BACKWARD_slow:
+      Serial.println("BACKWARD_slow");
+      digitalWrite(leftMotor1,HIGH);
+      digitalWrite(leftMotor2,LOW);
+      digitalWrite(rightMotor1,LOW);
+      digitalWrite(rightMotor2,HIGH);
+      analogWrite(ENA1,140);
+      analogWrite(ENA2,140);
+      analogWrite(ENB1,140);
+      analogWrite(ENB2,140);
+      break;
+    case BACKWARD_fast:
+      Serial.println("BACKWARD_fast");
+      digitalWrite(leftMotor1,HIGH);
+      digitalWrite(leftMotor2,LOW);
+      digitalWrite(rightMotor1,LOW);
+      digitalWrite(rightMotor2,HIGH);
+      analogWrite(ENA1,230);
+      analogWrite(ENA2,230);
+      analogWrite(ENB1,230);
+      analogWrite(ENB2,230);
+      break;
+    case STOP:
+      Serial.println("STOP");
+      digitalWrite(leftMotor1,LOW);
+      digitalWrite(leftMotor2,LOW);
+      digitalWrite(rightMotor1,LOW);
+      digitalWrite(rightMotor2,LOW);
+      break;
+      
+  }
+}
